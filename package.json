@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run clean && rollup --config && npm run minify",
-    "clean": "rm -rf dist/",
+    "clean": "rimraf dist/",
     "demo": "webpack --mode production",
     "docs": "typedoc --plugin typedoc-plugin-markdown --hideBreadcrumbs --out docs --readme none src/panzoom.ts src/types.ts && node tasks/docs.js",
     "format": "eslint . --fix && prettier --write \"**/*.tsx\" \"**/*.ts\" \"**/*.js\" \"**/*.json\" \"**/*.md\"",

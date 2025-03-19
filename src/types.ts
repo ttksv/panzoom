@@ -365,6 +365,11 @@ export interface PanzoomObject {
     point: { clientX: number; clientY: number },
     zoomOptions?: ZoomOptions
   ) => CurrentValues
+  
+zoomBtn: (
+    scale: number,
+    zoomOptions?: ZoomOptions
+  ) => CurrentValues;
   /**
    * Zoom the Panzoom element to a focal point using the given WheelEvent
    *

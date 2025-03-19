@@ -403,7 +403,7 @@ function Panzoom(
       y: (clientY / effectiveArea.height) * (effectiveArea.height * toScale)
     }
 
-    return zoom(toScale, { ...zoomOptions, animate: false, focal }, originalEvent)
+    return zoom(toScale, { ...zoomOptions, focal }, originalEvent)
   }
 
   function zoomWithWheel(event: WheelEvent, zoomOptions?: ZoomOptions) {
@@ -419,6 +419,27 @@ function Panzoom(
     const toScale = constrainScale(scale * Math.exp((wheel * opts.step) / 3), opts).scale
 
     return zoomToPoint(toScale, event, opts, event)
+  }
+  function zoomBtn(
+    toScale: number,
+    zoomOptions?: ZoomOptions,
+    originalEvent?: PanzoomEventDetail['originalEvent']
+  ) {
+    const dims = getDimensions(elem);
+
+    const effectiveArea = {
+      width: dims.parent.width - dims.parent.padding.left - dims.parent.padding.right - dims.parent.border.left - dims.parent.border.right,
+      height: dims.parent.height - dims.parent.padding.top - dims.parent.padding.bottom - dims.parent.border.top - dims.parent.border.bottom
+    };
+    const centerX = effectiveArea.width / 2;
+    const centerY = effectiveArea.height / 2;
+    
+    const focal = {
+        clientX: centerX,
+        clientY: centerY
+    };
+
+    return zoomToPoint(toScale, focal, { ...options, ...zoomOptions, animate: true }, originalEvent)
   }
 
   function reset(resetOptions?: PanzoomOptions) {
@@ -566,7 +587,8 @@ function Panzoom(
     zoomIn,
     zoomOut,
     zoomToPoint,
-    zoomWithWheel
+    zoomWithWheel,
+    zoomBtn
   }
 }
 
