@@ -353,7 +353,6 @@ function Panzoom(
     originalEvent?: PanzoomEventDetail['originalEvent']
   ) {
     const dims = getDimensions(elem)
-
     // Instead of thinking of operating on the panzoom element,
     // think of operating on the area inside the panzoom
     // element's parent
@@ -402,7 +401,6 @@ function Panzoom(
       x: (clientX / effectiveArea.width) * (effectiveArea.width * toScale),
       y: (clientY / effectiveArea.height) * (effectiveArea.height * toScale)
     }
-
     return zoom(toScale, { ...zoomOptions, focal }, originalEvent)
   }
 
@@ -420,27 +418,27 @@ function Panzoom(
 
     return zoomToPoint(toScale, event, opts, event)
   }
-  function zoomBtn(
-    toScale: number,
-    zoomOptions?: ZoomOptions,
-    originalEvent?: PanzoomEventDetail['originalEvent']
-  ) {
+  function zoomInOutCenter(
+    isIn: boolean, 
+    zoomOptions?: ZoomOptions
+) {
+    // map_areaの親要素の中央を基準にズームする
     const dims = getDimensions(elem);
-
-    const effectiveArea = {
-      width: dims.parent.width - dims.parent.padding.left - dims.parent.padding.right - dims.parent.border.left - dims.parent.border.right,
-      height: dims.parent.height - dims.parent.padding.top - dims.parent.padding.bottom - dims.parent.border.top - dims.parent.border.bottom
-    };
-    const centerX = effectiveArea.width / 2;
-    const centerY = effectiveArea.height / 2;
-    
     const focal = {
-        clientX: centerX,
-        clientY: centerY
+        clientX: dims.parent.left + dims.parent.width / 2,
+        clientY: dims.parent.top + dims.parent.height / 2
     };
-
-    return zoomToPoint(toScale, focal, { ...options, ...zoomOptions, animate: true }, originalEvent)
+    const opts = { ...options, animate: true, ...zoomOptions }
+    return zoomToPoint(scale * Math.exp((isIn ? 1 : -1) * opts.step), focal, { ...options, ...zoomOptions, animate: true })
   }
+  function zoomInCenter(zoomOptions?: ZoomOptions) {
+    return zoomInOutCenter(true, zoomOptions)
+  }
+
+  function zoomOutCenter(zoomOptions?: ZoomOptions) {
+    return zoomInOutCenter(false, zoomOptions)
+  }
+
 
   function reset(resetOptions?: PanzoomOptions) {
     const opts = { ...options, animate: true, force: true, ...resetOptions }
@@ -588,7 +586,9 @@ function Panzoom(
     zoomOut,
     zoomToPoint,
     zoomWithWheel,
-    zoomBtn
+    zoomInOutCenter,
+    zoomInCenter,
+    zoomOutCenter
   }
 }
 
